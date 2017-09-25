@@ -158,16 +158,27 @@ module Kafka
         buffer_fill_percentage = buffer_fill_ratio * 100.0
 
         # This gets us the write rate.
+        increment_start = Time.now
         increment("producer.#{client}.#{topic}.produce.messages")
+        puts "increment: #{(Time.now-increment_start)*1000}"
 
+        timing_start = Time.now
         timing("producer.#{client}.#{topic}.produce.message_size", message_size)
+        puts "timing: #{(Time.now-timing_start)*1000}"
 
         # This gets us the avg/max buffer size per producer.
+        timing_start = Time.now
         timing("producer.#{client}.buffer.size", buffer_size)
+        puts "timing: #{(Time.now-timing_start)*1000}"
 
         # This gets us the avg/max buffer fill ratio per producer.
+        timing_start = Time.now
         timing("producer.#{client}.buffer.fill_ratio", buffer_fill_ratio)
+        puts "timing: #{(Time.now-timing_start)*1000}"
+
+        timing_start = Time.now
         timing("producer.#{client}.buffer.fill_percentage", buffer_fill_percentage)
+        puts "timing: #{(Time.now-timing_start)*1000}"
       end
 
       def buffer_overflow(event)
