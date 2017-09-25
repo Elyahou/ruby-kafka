@@ -183,7 +183,7 @@ module Kafka
     # @return [nil]
     def produce(value, key: nil, topic:, partition: nil, partition_key: nil)
       create_time = Time.now
-
+      new_start = Time.now
       message = PendingMessage.new(
         value && value.to_s,
         key && key.to_s,
@@ -192,6 +192,7 @@ module Kafka
         partition_key && partition_key.to_s,
         create_time,
       )
+      puts "new: #{(Time.now-new_start)*1000}"
 
       if buffer_size >= @max_buffer_size
         buffer_overflow topic,
@@ -203,9 +204,12 @@ module Kafka
           "Cannot produce to #{topic}, max buffer bytesize (#{@max_buffer_bytesize} bytes) reached"
       end
 
+      write_start = Time.now
       @target_topics.add(topic)
       @pending_message_queue.write(message)
+      puts "write: #{(Time.now-write_start)*1000}"
 
+      instrumentation_start = Time.now
       @instrumenter.instrument("produce_message.producer", {
         value: value,
         key: key,
@@ -215,6 +219,7 @@ module Kafka
         buffer_size: buffer_size,
         max_buffer_size: @max_buffer_size,
       })
+      puts "instrumentation: #{(Time.now-instrumentation_start)*1000}"
 
       nil
     end
