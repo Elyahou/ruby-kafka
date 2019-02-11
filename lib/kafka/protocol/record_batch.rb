@@ -165,7 +165,9 @@ module Kafka
         is_control_batch = (attributes & IS_CONTROL_BATCH_MASK) > 0
 
         last_offset_delta = record_batch_decoder.int32
-        first_timestamp = Time.at(record_batch_decoder.int64 / 1000)
+        first_timestamp = record_batch_decoder.int64
+        puts "first_timestamp: #{first_timestamp}"
+        first_timestamp = Time.at(first_timestamp / 1000)
         max_timestamp = Time.at(record_batch_decoder.int64 / 1000)
 
         producer_id = record_batch_decoder.int64
@@ -183,10 +185,12 @@ module Kafka
 
         records_array_decoder = Decoder.from_string(records_array_raw)
         records_array = []
+        puts "records_array_length: #{records_array_length}"
         until records_array_decoder.eof?
           record = Record.decode(records_array_decoder)
           record.offset = first_offset + record.offset_delta
           puts "#{record.key}: record.create_time =  first_timestamp + record.timestamp_delta = #{first_timestamp} + #{record.timestamp_delta} = #{first_timestamp + record.timestamp_delta}"
+          puts "max_timestamp: #{max_timestamp}"
           record.create_time = first_timestamp + record.timestamp_delta
           records_array << record
         end
