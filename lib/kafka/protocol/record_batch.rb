@@ -166,7 +166,7 @@ module Kafka
         is_control_batch = (attributes & IS_CONTROL_BATCH_MASK) > 0
         timestampType = (attributes & TIMESTAMP_TYPE_MASK)
         puts "timestampType: #{timestampType}"
-        puts "logsAppendTime? #{attributes & TIMESTAMP_TYPE_MASK == TIMESTAMP_TYPE_MASK}"
+        puts "logsAppendTime? #{(attributes & TIMESTAMP_TYPE_MASK) == TIMESTAMP_TYPE_MASK}"
 
         last_offset_delta = record_batch_decoder.int32
         first_timestamp = record_batch_decoder.int64
