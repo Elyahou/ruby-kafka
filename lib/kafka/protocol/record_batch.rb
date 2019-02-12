@@ -193,7 +193,7 @@ module Kafka
         until records_array_decoder.eof?
           record = Record.decode(records_array_decoder)
           record.offset = first_offset + record.offset_delta
-          puts "#{record.key}:#{record.partition} record.create_time =  first_timestamp + record.timestamp_delta = #{first_timestamp} + #{record.timestamp_delta} = #{first_timestamp + record.timestamp_delta}"
+          puts "#{record.key}: record.create_time =  first_timestamp + record.timestamp_delta = #{first_timestamp} + #{record.timestamp_delta} = #{first_timestamp + record.timestamp_delta}"
           puts "max_timestamp: #{max_timestamp}"
           record.create_time = first_timestamp + record.timestamp_delta
           records_array << record
